@@ -1,10 +1,30 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  MEMBER
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  DONE
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
 }
 
 model User {
@@ -37,7 +57,7 @@ model Project {
 
 model ProjectMember {
   id       String   @id @default(cuid())
-  role     String   @default("MEMBER")
+  role     Role     @default(MEMBER)
   joinedAt DateTime @default(now())
 
   userId    String
@@ -52,8 +72,8 @@ model Task {
   id          String     @id @default(cuid())
   title       String
   description String?
-  status      String     @default("TODO")
-  priority    String     @default("MEDIUM")
+  status      TaskStatus @default(TODO)
+  priority    Priority   @default(MEDIUM)
   dueDate     DateTime?
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
