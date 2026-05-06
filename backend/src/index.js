@@ -13,8 +13,13 @@ const app = express();
 
 // ─── Middleware ───────────────────────────────────────────────────────────────
 app.use(helmet());
+let allowedOrigin = process.env.FRONTEND_URL || '*';
+if (allowedOrigin !== '*' && allowedOrigin.endsWith('/')) {
+  allowedOrigin = allowedOrigin.slice(0, -1);
+}
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || '*',
+  origin: allowedOrigin,
   credentials: true,
 }));
 app.use(morgan('dev'));
