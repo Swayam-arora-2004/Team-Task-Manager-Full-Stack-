@@ -4,8 +4,8 @@ Hey everyone! 👋 This is **TeamFlow**, a full-stack web application I built as
 
 I wanted to build something that solves a real problem while showing off my skills in frontend design, backend API development, database relationships, and secure authentication. 
 
-You can check out the live demo here: [Add your Railway URL here]
-And the code is right here on GitHub: [Add your repo URL here]
+You can check out the live demo here: [https://accomplished-vision-production-cc11.up.railway.app](url)
+
 
 ---
 
