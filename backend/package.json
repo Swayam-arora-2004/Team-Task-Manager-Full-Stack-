@@ -11,7 +11,7 @@
     "db:push": "prisma db push",
     "db:studio": "prisma studio",
     "postinstall": "prisma generate",
-    "railway:build": "cp prisma/schema.postgres.prisma prisma/schema.prisma && npm install && npx prisma generate",
+    "railway:build": "npm install && npx prisma generate",
     "railway:start": "npx prisma db push && node src/index.js"
   },
   "dependencies": {
