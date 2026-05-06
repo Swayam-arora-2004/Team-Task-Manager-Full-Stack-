@@ -14,6 +14,9 @@ const app = express();
 // ─── Middleware ───────────────────────────────────────────────────────────────
 app.use(helmet());
 let allowedOrigin = process.env.FRONTEND_URL || '*';
+if (allowedOrigin !== '*' && !allowedOrigin.startsWith('http://') && !allowedOrigin.startsWith('https://')) {
+  allowedOrigin = 'https://' + allowedOrigin;
+}
 if (allowedOrigin !== '*' && allowedOrigin.endsWith('/')) {
   allowedOrigin = allowedOrigin.slice(0, -1);
 }
