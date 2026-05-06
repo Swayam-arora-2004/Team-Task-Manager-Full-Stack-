@@ -89,4 +89,3 @@ If you're exploring the codebase, here's how I organized everything:
 
 ---
 
-*Built with passion and lots of coffee for my final placement submission! Feel free to reach out if you have any questions about the code.*
