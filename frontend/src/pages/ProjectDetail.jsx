@@ -35,7 +35,10 @@ export default function ProjectDetail() {
     e.preventDefault();
     setSubmitting(true);
     try {
-      const payload = { ...taskForm, assigneeId: taskForm.assigneeId || undefined, dueDate: taskForm.dueDate || undefined };
+      const payload = { ...taskForm };
+      if (!payload.assigneeId) delete payload.assigneeId;
+      if (!payload.dueDate) delete payload.dueDate;
+      
       const r = await api.post(`/projects/${id}/tasks`, payload);
       setProject(prev => ({ ...prev, tasks: [r.data.task, ...prev.tasks] }));
       setShowCreate(false);
@@ -48,11 +51,16 @@ export default function ProjectDetail() {
     }
   };
 
-  const handleUpdateStatus = async (taskId, newStatus) => {
+  const handleOpenCreate = (status = 'TODO') => {
+    setTaskForm({ title: '', description: '', priority: 'MEDIUM', status, dueDate: '', assigneeId: '' });
+    setShowCreate(true);
+  };
+
+  const handleUpdateTaskData = async (taskId, data) => {
     try {
-      const r = await api.put(`/projects/${id}/tasks/${taskId}`, { status: newStatus });
+      const r = await api.put(`/projects/${id}/tasks/${taskId}`, data);
       setProject(prev => ({ ...prev, tasks: prev.tasks.map(t => t.id === taskId ? r.data.task : t) }));
-      toast.success('Status updated!');
+      toast.success('Task updated!');
     } catch (err) {
       toast.error(err.response?.data?.error || 'Failed to update task');
     }
@@ -87,7 +95,7 @@ export default function ProjectDetail() {
         <div style={{ display: 'flex', gap: 8 }}>
           {isAdmin && (
             <>
-              <button id="create-task-btn" className="btn btn-primary btn-sm" onClick={() => setShowCreate(true)}>
+              <button id="create-task-btn" className="btn btn-primary btn-sm" onClick={() => handleOpenCreate('TODO')}>
                 <Plus size={14} /> New Task
               </button>
               <Link to={`/projects/${id}/settings`} className="btn btn-secondary btn-sm"><Settings size={14} /> Settings</Link>
@@ -105,7 +113,7 @@ export default function ProjectDetail() {
       </div>
 
       {activeTab === 'board' && (
-        <KanbanBoard tasks={project.tasks || []} onTaskClick={setSelectedTask} />
+        <KanbanBoard tasks={project.tasks || []} onTaskClick={setSelectedTask} onAddTask={isAdmin ? handleOpenCreate : null} />
       )}
 
       {activeTab === 'members' && (
@@ -181,7 +189,7 @@ export default function ProjectDetail() {
               <div style={{ display: 'flex', gap: 8, marginLeft: 'auto' }}>
                 <select className="form-select" style={{ padding: '6px 10px', fontSize: '0.8rem' }}
                   value={selectedTask.status}
-                  onChange={e => { handleUpdateStatus(selectedTask.id, e.target.value); setSelectedTask(prev => ({ ...prev, status: e.target.value })); }}>
+                  onChange={e => { handleUpdateTaskData(selectedTask.id, { status: e.target.value }); setSelectedTask(prev => ({ ...prev, status: e.target.value })); }}>
                   {STATUSES.map(s => <option key={s} value={s}>{s.replace('_', ' ')}</option>)}
                 </select>
                 <button className="btn btn-secondary btn-sm" onClick={() => setSelectedTask(null)}>Close</button>
@@ -192,9 +200,41 @@ export default function ProjectDetail() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             <Row label="Priority"><span className={`badge badge-${selectedTask.priority.toLowerCase()}`}>{selectedTask.priority}</span></Row>
             <Row label="Status"><span className={`badge badge-${selectedTask.status === 'IN_PROGRESS' ? 'in-progress' : selectedTask.status.toLowerCase()}`}>{selectedTask.status.replace('_', ' ')}</span></Row>
-            <Row label="Assignee">{selectedTask.assignee?.name || <span style={{ color: 'var(--text-dim)' }}>Unassigned</span>}</Row>
+            <Row label="Assignee">
+              {isAdmin ? (
+                <select className="form-select" style={{ padding: '4px 8px', fontSize: '0.8rem', height: 'auto', width: 'auto' }}
+                  value={selectedTask.assigneeId || ''}
+                  onChange={e => {
+                    const newAssigneeId = e.target.value || null;
+                    handleUpdateTaskData(selectedTask.id, { assigneeId: newAssigneeId });
+                    setSelectedTask(prev => ({ 
+                      ...prev, 
+                      assigneeId: newAssigneeId, 
+                      assignee: project.members.find(m => m.user.id === newAssigneeId)?.user || null 
+                    }));
+                  }}>
+                  <option value="">Unassigned</option>
+                  {project.members?.map(m => <option key={m.user.id} value={m.user.id}>{m.user.name}</option>)}
+                </select>
+              ) : (
+                selectedTask.assignee?.name || <span style={{ color: 'var(--text-dim)' }}>Unassigned</span>
+              )}
+            </Row>
             <Row label="Created by">{selectedTask.creator?.name}</Row>
-            {selectedTask.dueDate && <Row label="Due date">{format(new Date(selectedTask.dueDate), 'PPP')}</Row>}
+            <Row label="Due date">
+              {isAdmin ? (
+                <input type="date" className="form-input" style={{ padding: '4px 8px', fontSize: '0.8rem', height: 'auto', width: 'auto' }}
+                  value={selectedTask.dueDate ? selectedTask.dueDate.split('T')[0] : ''}
+                  onChange={e => {
+                    const newDate = e.target.value || null;
+                    handleUpdateTaskData(selectedTask.id, { dueDate: newDate });
+                    setSelectedTask(prev => ({ ...prev, dueDate: newDate ? new Date(newDate).toISOString() : null }));
+                  }}
+                />
+              ) : (
+                selectedTask.dueDate ? format(new Date(selectedTask.dueDate), 'PPP') : <span style={{ color: 'var(--text-dim)' }}>No due date</span>
+              )}
+            </Row>
           </div>
         </Modal>
       )}

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { Plus, FolderKanban, Users, ListTodo, Settings, X } from 'lucide-react';
 import api from '../api/client';
@@ -11,6 +11,7 @@ export default function Projects() {
   const [showCreate, setShowCreate] = useState(false);
   const [form, setForm] = useState({ name: '', description: '' });
   const [submitting, setSubmitting] = useState(false);
+  const navigate = useNavigate();
 
   const fetchProjects = () => {
     api.get('/projects').then(r => setProjects(r.data.projects)).catch(console.error).finally(() => setLoading(false));
@@ -67,10 +68,10 @@ export default function Projects() {
                 <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
                   <span className={`badge badge-${p.role?.toLowerCase()}`}>{p.role}</span>
                   {p.role === 'ADMIN' && (
-                    <Link to={`/projects/${p.id}/settings`} onClick={e => e.stopPropagation()}
+                    <button onClick={e => { e.preventDefault(); e.stopPropagation(); navigate(`/projects/${p.id}/settings`); }}
                       className="btn btn-ghost btn-icon btn-sm" title="Settings">
                       <Settings size={14} />
-                    </Link>
+                    </button>
                   )}
                 </div>
               </div>

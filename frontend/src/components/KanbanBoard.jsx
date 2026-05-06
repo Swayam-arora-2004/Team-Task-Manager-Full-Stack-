@@ -6,7 +6,9 @@ const COLUMNS = [
   { id: 'DONE', label: 'Done', dotClass: 'col-dot-done' },
 ];
 
-export default function KanbanBoard({ tasks, onTaskClick }) {
+import { Plus } from 'lucide-react';
+
+export default function KanbanBoard({ tasks, onTaskClick, onAddTask }) {
   return (
     <div className="kanban">
       {COLUMNS.map(col => {
@@ -29,6 +31,14 @@ export default function KanbanBoard({ tasks, onTaskClick }) {
                 colTasks.map(task => (
                   <TaskCard key={task.id} task={task} onClick={onTaskClick} />
                 ))
+              )}
+              {onAddTask && (
+                <button 
+                  onClick={() => onAddTask(col.id)}
+                  style={{ width: '100%', padding: '8px', marginTop: '12px', background: 'transparent', border: '1px dashed var(--border)', borderRadius: '6px', color: 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', fontSize: '0.8rem' }}
+                >
+                  <Plus size={14} /> Add Task
+                </button>
               )}
             </div>
           </div>

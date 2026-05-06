@@ -36,6 +36,15 @@ const taskValidation = [
   handleValidation,
 ];
 
+const updateTaskValidation = [
+  body('title').optional().trim().notEmpty().withMessage('Task title cannot be empty').isLength({ max: 300 }),
+  body('description').optional().trim().isLength({ max: 2000 }),
+  body('status').optional().isIn(['TODO', 'IN_PROGRESS', 'DONE']).withMessage('Invalid status'),
+  body('priority').optional().isIn(['LOW', 'MEDIUM', 'HIGH']).withMessage('Invalid priority'),
+  body('dueDate').optional().isISO8601().withMessage('Invalid date format'),
+  handleValidation,
+];
+
 const inviteMemberValidation = [
   body('email').isEmail().withMessage('Valid email is required').normalizeEmail(),
   body('role').optional().isIn(['ADMIN', 'MEMBER']).withMessage('Role must be ADMIN or MEMBER'),
@@ -47,5 +56,6 @@ module.exports = {
   loginValidation,
   projectValidation,
   taskValidation,
+  updateTaskValidation,
   inviteMemberValidation,
 };

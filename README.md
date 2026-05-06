@@ -1,179 +1,92 @@
-# TeamFlow — Team Task Manager
+# TeamFlow - My Full-Stack Task Manager
 
-A production-grade full-stack task management application with role-based access control, built for team collaboration.
+Hey everyone! 👋 This is **TeamFlow**, a full-stack web application I built as my final placement submission. It's essentially a project management tool (kinda like a simplified Jira or Trello) that lets teams collaborate, assign tasks, and track their progress through a Kanban board.
 
-🌐 **Live Demo**: [Add your Railway URL here]  
-📁 **GitHub**: [Add your repo URL here]
+I wanted to build something that solves a real problem while showing off my skills in frontend design, backend API development, database relationships, and secure authentication. 
 
----
-
-## ✨ Features
-
-- 🔐 **Authentication** — Secure JWT-based signup & login with bcrypt password hashing
-- 📁 **Project Management** — Create, update, and delete projects; invite team members
-- ✅ **Task Tracking** — Kanban board (Todo / In Progress / Done) with priorities & due dates
-- 👥 **Role-Based Access Control** — Admins manage everything; Members update their assigned tasks
-- 📊 **Dashboard** — Stats overview, overdue alerts, my tasks, and recent projects
-- 🎨 **Premium UI** — Dark mode with glassmorphism, smooth animations, responsive design
+You can check out the live demo here: [Add your Railway URL here]
+And the code is right here on GitHub: [Add your repo URL here]
 
 ---
 
-## 🏗️ Tech Stack
+## What can it do?
 
-| Layer | Technology |
-|---|---|
-| Frontend | React 18 + Vite |
-| Styling | Vanilla CSS (custom design system) |
-| Backend | Node.js + Express |
-| Database | PostgreSQL |
-| ORM | Prisma |
-| Auth | JWT + bcrypt |
-| Deployment | Railway |
+I tried to pack in as many essential features as possible to make it a genuinely useful tool:
 
----
-
-## 🚀 Local Setup
-
-### Prerequisites
-- Node.js >= 18
-- PostgreSQL (local or cloud)
-
-### Backend
-```bash
-cd backend
-cp .env.example .env
-# Edit .env with your DATABASE_URL and JWT_SECRET
-
-npm install
-npx prisma db push      # Create tables
-npm run dev             # Start on port 5000
-```
-
-### Frontend
-```bash
-cd frontend
-cp .env.example .env
-# Set VITE_API_URL=http://localhost:5000/api
-
-npm install
-npm run dev             # Start on port 5173
-```
+- **Sign up & Login:** Fully secure authentication using JWTs. Your passwords are encrypted with bcrypt, so nobody (not even me!) can see them.
+- **Project Workspaces:** You can create as many projects as you want and invite your teammates using their email addresses.
+- **Kanban Board:** A clear board (To Do, In Progress, Done) to visually track how tasks are moving along.
+- **Task Assignment:** As an admin, you can assign tasks to specific people, set priority levels (Low, Medium, High), and add due dates.
+- **Role-Based Access (RBAC):** There are "Admins" and "Members". Admins have full control, while Members can only update the status of the tasks they've been specifically assigned to.
+- **Dashboard:** A nice little overview page that shows your active projects, tasks you need to finish, and anything that's overdue.
 
 ---
 
-## 🌐 Railway Deployment
+## How I built it
 
-### 1. Backend Service
-1. Create new project on [railway.app](https://railway.app)
-2. Add **PostgreSQL** plugin — copy the `DATABASE_URL`
-3. Create a new service → Deploy from GitHub → select `/backend` folder
-4. Add environment variables:
-   ```
-   DATABASE_URL=<from PostgreSQL plugin>
-   JWT_SECRET=<random 32+ char string>
-   FRONTEND_URL=<your frontend Railway URL>
-   PORT=5000
-   ```
-5. After deploy, run migration: In Railway shell → `npx prisma db push`
+I used my favorite modern web development stack to build this:
 
-### 2. Frontend Service
-1. Create another service → Deploy from GitHub → select `/frontend` folder
-2. Add environment variable:
-   ```
-   VITE_API_URL=<your backend Railway URL>/api
-   ```
-3. Deploy — Railway auto-runs `npm run build` then `npm start`
+- **Frontend:** React.js (via Vite). I didn't use any heavy CSS libraries like Tailwind or Bootstrap because I wanted to write the CSS myself from scratch to achieve a custom "glassmorphism" dark mode look.
+- **Backend:** Node.js with Express for the REST API.
+- **Database:** PostgreSQL (I used SQLite during development for speed, but the production version runs on Postgres).
+- **ORM:** Prisma (it makes working with SQL so much easier and safer).
+- **Deployment:** The whole thing is configured to be deployed on Railway!
 
 ---
 
-## 📡 API Reference
+## How to run it locally
 
-### Auth
-| Method | Endpoint | Auth | Description |
-|---|---|---|---|
-| POST | `/api/auth/signup` | Public | Register |
-| POST | `/api/auth/login` | Public | Login |
-| GET | `/api/auth/me` | ✅ | Get current user |
+If you want to clone this and run it on your own machine, here is how you do it:
 
-### Projects
-| Method | Endpoint | Role | Description |
-|---|---|---|---|
-| GET | `/api/projects` | Auth | List my projects |
-| POST | `/api/projects` | Auth | Create project |
-| GET | `/api/projects/:id` | Member | Project details |
-| PUT | `/api/projects/:id` | Admin | Update project |
-| DELETE | `/api/projects/:id` | Admin | Delete project |
-| POST | `/api/projects/:id/members` | Admin | Invite member |
-| DELETE | `/api/projects/:id/members/:userId` | Admin | Remove member |
-| PUT | `/api/projects/:id/members/:userId/role` | Admin | Change role |
+**First, get the backend running:**
+1. Open your terminal and go to the `backend` folder: `cd backend`
+2. Create a `.env` file (you can copy `.env.example`). You'll need to set the database URL and a random string for the `JWT_SECRET`.
+3. Install the packages: `npm install`
+4. Set up the database tables: `npx prisma db push`
+5. Start the server: `npm run dev` (it runs on port 5001)
 
-### Tasks
-| Method | Endpoint | Role | Description |
-|---|---|---|---|
-| GET | `/api/projects/:id/tasks` | Member | List tasks |
-| POST | `/api/projects/:id/tasks` | Admin | Create task |
-| PUT | `/api/projects/:id/tasks/:taskId` | Admin/Assignee | Update task |
-| DELETE | `/api/projects/:id/tasks/:taskId` | Admin | Delete task |
-
-### Dashboard
-| Method | Endpoint | Auth | Description |
-|---|---|---|---|
-| GET | `/api/dashboard` | ✅ | Aggregated stats |
+**Then, start the frontend:**
+1. Open a new terminal tab and go to the `frontend` folder: `cd frontend`
+2. Create a `.env` file and point it to the backend: `VITE_API_URL=http://localhost:5001/api`
+3. Install the packages: `npm install`
+4. Start the Vite server: `npm run dev`
+5. Open `http://localhost:5173` in your browser!
 
 ---
 
-## 🔒 Role-Based Access Control
+## API Documentation
 
-| Action | Admin | Member |
-|---|---|---|
-| View project & tasks | ✅ | ✅ |
-| Create/delete tasks | ✅ | ❌ |
-| Assign tasks | ✅ | ❌ |
-| Update task status | ✅ | ✅ (own only) |
-| Invite/remove members | ✅ | ❌ |
-| Change member roles | ✅ | ❌ |
-| Delete project | ✅ | ❌ |
+If you want to test the endpoints via Postman or Curl, here's a quick summary of what I built:
 
----
+**Authentication**
+- `POST /api/auth/signup` - Register a new account
+- `POST /api/auth/login` - Login and get a token
+- `GET /api/auth/me` - Get logged-in user details
 
-## 🎬 Demo Video Script (2-5 min)
+**Projects & Members**
+- `GET /api/projects` - Get all your projects
+- `POST /api/projects` - Create a new project
+- `GET /api/projects/:id` - Get project details (tasks, members)
+- `POST /api/projects/:id/members` - Invite someone to your project
 
-1. **Landing page** (0:15) — Show the hero, features, and CTA
-2. **Signup** (0:30) — Create a new account
-3. **Create project** (0:30) — Add a project with description
-4. **Create tasks** (1:00) — Add 3-4 tasks with different priorities/due dates to show the Kanban board
-5. **Invite member** (0:30) — Invite a second user email via Settings
-6. **Member login** (0:30) — Login as the second user, show restricted access
-7. **Update task status** (0:30) — Member updates their own task
-8. **Dashboard** (0:30) — Show stats, overdue tasks, my tasks
+**Tasks**
+- `POST /api/projects/:id/tasks` - Create a task
+- `PUT /api/projects/:id/tasks/:taskId` - Update a task (status, assignee, etc.)
+- `DELETE /api/projects/:id/tasks/:taskId` - Delete a task
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
-```
-team-task-manager/
-├── backend/
-│   ├── prisma/schema.prisma
-│   ├── src/
-│   │   ├── middleware/   (auth.js, projectRole.js)
-│   │   ├── routes/       (auth, projects, tasks, dashboard)
-│   │   ├── controllers/  (auth, projects, tasks, dashboard)
-│   │   └── index.js
-│   └── package.json
-├── frontend/
-│   ├── src/
-│   │   ├── api/client.js
-│   │   ├── context/AuthContext.jsx
-│   │   ├── components/   (AppShell, KanbanBoard, TaskCard, Modal)
-│   │   ├── pages/        (Landing, Login, Signup, Dashboard, Projects, ProjectDetail, ProjectSettings)
-│   │   └── App.jsx
-│   └── package.json
-└── README.md
-```
+If you're exploring the codebase, here's how I organized everything:
+- `backend/src/controllers/` - The business logic for handling API requests
+- `backend/src/routes/` - The Express router definitions
+- `backend/src/middleware/` - Where the magic happens for JWT verification and role checks
+- `backend/prisma/schema.prisma` - The database schema definition
+- `frontend/src/components/` - Reusable UI components like the Kanban board and Modals
+- `frontend/src/pages/` - The main views (Dashboard, Project Detail, etc.)
+- `frontend/src/context/AuthContext.jsx` - Global state for managing the user's login session
 
 ---
 
-## 👤 Author
-
-Built with ❤️ for placement submission.
+*Built with passion and lots of coffee for my final placement submission! Feel free to reach out if you have any questions about the code.*

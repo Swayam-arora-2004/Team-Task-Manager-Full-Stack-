@@ -8,6 +8,7 @@ import Dashboard from './pages/Dashboard';
 import Projects from './pages/Projects';
 import ProjectDetail from './pages/ProjectDetail';
 import ProjectSettings from './pages/ProjectSettings';
+import Profile from './pages/Profile';
 import AppShell from './components/AppShell';
 
 function PrivateRoute({ children }) {
@@ -32,6 +33,7 @@ function AppRoutes() {
       <Route path="/projects" element={<PrivateRoute><AppShell><Projects /></AppShell></PrivateRoute>} />
       <Route path="/projects/:id" element={<PrivateRoute><AppShell><ProjectDetail /></AppShell></PrivateRoute>} />
       <Route path="/projects/:id/settings" element={<PrivateRoute><AppShell><ProjectSettings /></AppShell></PrivateRoute>} />
+      <Route path="/profile" element={<PrivateRoute><AppShell><Profile /></AppShell></PrivateRoute>} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
